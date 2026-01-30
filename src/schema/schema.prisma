@@ -10,109 +10,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// This is the Asset table and its fields
+model Product {
+  ProductID       Int       @id(map: "PK_Product") @default(autoincrement())
+  ProductName     String    @db.VarChar(50)
+  ProductCode     String    @unique @db.VarChar(50)
+  SerialNumber    String    @unique @db.VarChar(50)
+  PurchaseDate    DateTime?
+  ProductStatusID Int
+  ProductTypeID   Int
+  Model           String    @db.VarChar(50)
+  CreatedBy       String    @db.VarChar(50)
+  CreatedDate     DateTime  @default(now()) @db.Timestamp(6)
+  IsDeleted       Boolean   @default(false)
+  ModifiedBy      String?   @db.VarChar(50)
+  ModifiedDate    DateTime? @db.Timestamp(6)
+}
+
 model Asset {
-  AssetID           Int                @id(map: "PK_Asset") @default(autoincrement())
-  AssetName         String             @db.VarChar(50)
-  AssetCode         String             @unique @db.VarChar(50)
-  SerialNumber      String             @unique @db.VarChar(50)
-  AssetCategoryID   Int
-  AssetStatusID     Int
-  PurchaseDate      DateTime?
-  Model             String             @db.VarChar(50)
-  LocationID        Int
-  UserID            Int?
-  CreatedBy         String             @db.VarChar(50)
-  CreatedDate       DateTime           @default(now()) @db.Timestamp(6)
-  IsDeleted         Boolean            @default(false)
-  ModifiedBy        String?            @db.VarChar(50)
-  ModifiedDate      DateTime?          @db.Timestamp(6)
-  // Relations
-  AssetCategory     AssetCategory      @relation(fields: [AssetCategoryID], references: [AssetCategoryID]) // Link to AssetCategory model
-  Location          Location           @relation(fields: [LocationID], references: [LocationID]) // Link to Location model
-  User              User?              @relation(fields: [UserID], references: [UserID]) // Link to User model (optional)
-  AssetMaintenances AssetMaintenance[] // Reverse constraint: Relation from Asset model to AssetMaintenance model
-  AssetStatus       AssetStatus?       @relation(fields: [AssetStatusID], references: [AssetStatusID])
+  AssetID      Int       @id(map: "PK_Asset") @default(autoincrement())
+  ProductID    Int
+  UserID       Int?
+  CreatedBy    String    @db.VarChar(50)
+  CreatedDate  DateTime  @default(now()) @db.Timestamp(6)
+  ModifiedBy   String?   @db.VarChar(50)
+  ModifiedDate DateTime? @db.Timestamp(6)
+  IsDeleted    Boolean   @default(false)
 }
 
-// This is the User table and its fields
 model User {
-  UserID            Int                @id(map: "PK_User") @default(autoincrement())
-  UserName          String             @db.VarChar(50)
-  UserCode          String             @db.VarChar(50)
-  LocationID        Int
-  DepartmentID      Int
-  UserTypeID        Int
-  AccessName        String             @db.VarChar(100)
-  Password          String             @db.VarChar(100)
-  Email             String             @db.VarChar(100)
-  JoiningDate       DateTime           @db.Timestamp(6)
-  RelievedDate      DateTime?          @db.Timestamp(6)
-  CreatedBy         String             @db.VarChar(50)
-  CreatedDate       DateTime           @default(now()) @db.Timestamp(6)
-  IsDeleted         Boolean            @default(false)
-  ModifiedBy        String?            @db.VarChar(50)
-  ModifiedDate      DateTime?          @db.Timestamp(6)
-  // Relations
-  Location          Location           @relation(fields: [LocationID], references: [LocationID]) // Link to Location model
-  Department        Department         @relation(fields: [DepartmentID], references: [DepartmentID]) // Link to Department model
-  Asset             Asset[] // Reverse constraint: Relation from User model to Asset model
-  AssetMaintenances AssetMaintenance[] // Reverse constraint: Relation from User model to AssetMaintenance model
-  userType          UserType?          @relation(fields: [UserTypeID], references: [UserTypeID])
-}
-
-// This is the AssetMaintenance table and its fields
-model AssetMaintenance {
-  MaintenanceID            Int                     @id(map: "PK_AssetMaintenance") @default(autoincrement())
-  AssetID                  Int
-  UserID                   Int
-  Issue                    String                  @db.VarChar(50)
-  StartDate                DateTime
-  EndDate                  DateTime?
-  AssetMaintenanceStatusID Int
-  Description              String?                 @db.VarChar(100)
-  CreatedBy                String                  @db.VarChar(50)
-  CreatedDate              DateTime                @default(now()) @db.Timestamp(6)
-  IsDeleted                Boolean                 @default(false)
-  ModifiedBy               String?                 @db.VarChar(50)
-  ModifiedDate             DateTime?               @db.Timestamp(6)
-  // Relations
-  Asset                    Asset                   @relation(fields: [AssetID], references: [AssetID])
-  User                     User                    @relation(fields: [UserID], references: [UserID])
-  AssetMaintenanceStatus   AssetMaintenanceStatus? @relation(fields: [AssetMaintenanceStatusID], references: [AssetMaintenanceStatusID])
-  userType                 UserType?               @relation(fields: [userTypeUserTypeID], references: [UserTypeID])
-  userTypeUserTypeID       Int?
-}
-
-// This is the AssetCategory table and its fields
-model AssetCategory {
-  AssetCategoryID   Int       @id(map: "PK_AssetCategory") @default(autoincrement())
-  AssetCategoryName String    @db.VarChar(50)
-  AssetCategoryCode String    @db.VarChar(50)
-  CreatedBy         String    @db.VarChar(50)
-  CreatedDate       DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted         Boolean   @default(false)
-  ModifiedBy        String?   @db.VarChar(50)
-  ModifiedDate      DateTime? @db.Timestamp(6)
-  // Relations
-  Asset             Asset[] // Reverse constraint: Relation from AssetCategory model to Asset model
-}
-
-// This is the Department table and its fields
-model Department {
-  DepartmentID   Int       @id(map: "PK_Department") @default(autoincrement())
-  DepartmentName String    @db.VarChar(50)
-  DepartmentCode String    @db.VarChar(50)
+  UserID         Int       @id(map: "PK_User") @default(autoincrement())
+  UserName       String    @db.VarChar(50)
+  UserKey        String    @db.VarChar(50)
+  UserLocationID Int
+  UserRoleID     Int?
+  DisplayName    String    @db.VarChar(100)
+  PasswordHash   String    @db.VarChar(100)
+  EmailAddress   String    @db.VarChar(100)
+  StartDate      DateTime  @db.Timestamp(6)
+  EndDate        DateTime? @db.Timestamp(6)
   CreatedBy      String    @db.VarChar(50)
   CreatedDate    DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted      Boolean   @default(false)
   ModifiedBy     String?   @db.VarChar(50)
   ModifiedDate   DateTime? @db.Timestamp(6)
-  // Relations
-  User           User[] // Reverse constraint: Relation from Department model to User model
+  IsDeleted      Boolean   @default(false)
 }
 
-// This is the Location table and its fields
+model AssetServiceRequest {
+  AssetServiceRequestID Int       @id(map: "PK_AssetMaintenance") @default(autoincrement())
+  AssetID               Int
+  ReportedByUserID      Int
+  ReportedToUserID      Int
+  Defect                String    @db.VarChar(50)
+  StartDate             DateTime
+  EndDate               DateTime?
+  RequestStatusID       Int
+  Remarks               String?   @db.VarChar(500)
+  CreatedBy             String    @db.VarChar(50)
+  CreatedDate           DateTime  @default(now()) @db.Timestamp(6)
+  ModifiedBy            String?   @db.VarChar(50)
+  ModifiedDate          DateTime? @db.Timestamp(6)
+  IsDeleted             Boolean   @default(false)
+}
+
+model ProductType {
+  ProductTypeID   Int       @id(map: "PK_ProductType") @default(autoincrement())
+  ProductTypeName String    @db.VarChar(50)
+  ProductTypeCode String    @db.VarChar(50)
+  CreatedBy       String    @db.VarChar(50)
+  CreatedDate     DateTime  @default(now()) @db.Timestamp(6)
+  ModifiedBy      String?   @db.VarChar(50)
+  ModifiedDate    DateTime? @db.Timestamp(6)
+  IsDeleted       Boolean   @default(false)
+}
+
+model UserRole {
+  UserRoleID   Int       @id(map: "PK_UserRole") @default(autoincrement())
+  UserRoleName String    @db.VarChar(50)
+  UserRoleCode String    @db.VarChar(50)
+  CreatedBy    String    @db.VarChar(50)
+  CreatedDate  DateTime  @default(now()) @db.Timestamp(6)
+  IsDeleted    Boolean   @default(false)
+  ModifiedBy   String?   @db.VarChar(50)
+  ModifiedDate DateTime? @db.Timestamp(6)
+}
+
 model Location {
   LocationID   Int       @id(map: "PK_Location") @default(autoincrement())
   LocationName String    @db.VarChar(50)
@@ -122,47 +103,26 @@ model Location {
   IsDeleted    Boolean   @default(false)
   ModifiedBy   String?   @db.VarChar(50)
   ModifiedDate DateTime? @db.Timestamp(6)
-  // Relations
-  User         User[] // Reverse constraint: Relation from Location model to User model
-  Asset        Asset[] // Reverse constraint: Relation from Location model to Asset model
 }
 
-model AssetStatus {
-  AssetStatusID   Int       @id(map: "PK_AssetStatus") @default(autoincrement())
-  AssetStatusName String    @db.VarChar(50)
-  AssetStatusCode String    @db.VarChar(50)
-  CreatedBy       String    @db.VarChar(50)
-  CreatedDate     DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted       Boolean   @default(false)
-  ModifiedBy      String?   @db.VarChar(50)
-  ModifiedDate    DateTime? @db.Timestamp(6)
-  // Relations
-  Asset           Asset[] // Reverse constraint: Relation from AssetStatus model to Asset model
+model ProductStatus {
+  ProductStatusID   Int       @id(map: "PK_ProductStatus") @default(autoincrement())
+  ProductStatusName String    @db.VarChar(50)
+  ProductStatusCode String    @db.VarChar(50)
+  CreatedBy         String    @db.VarChar(50)
+  CreatedDate       DateTime  @default(now()) @db.Timestamp(6)
+  IsDeleted         Boolean   @default(false)
+  ModifiedBy        String?   @db.VarChar(50)
+  ModifiedDate      DateTime? @db.Timestamp(6)
 }
 
-model AssetMaintenanceStatus {
-  AssetMaintenanceStatusID   Int                @id(map: "PK_AssetMaintenanceStatus") @default(autoincrement())
-  AssetMaintenanceStatusName String             @db.VarChar(50)
-  AssetMaintenanceStatusCode String             @db.VarChar(50)
-  CreatedBy                  String             @db.VarChar(50)
-  CreatedDate                DateTime           @default(now()) @db.Timestamp(6)
-  IsDeleted                  Boolean            @default(false)
-  ModifiedBy                 String?            @db.VarChar(50)
-  ModifiedDate               DateTime?          @db.Timestamp(6)
-  // Relations
-  AssetMaintenance           AssetMaintenance[] // Reverse constraint: Relation from AssetMaintenanceStatus model to Asset model
-}
-
-model UserType {
-  UserTypeID        Int                @id(map: "PK_UserType") @default(autoincrement())
-  UserTypeName      String             @db.VarChar(50)
-  UserTypeCode      String             @db.VarChar(50)
-  CreatedBy         String             @db.VarChar(50)
-  CreatedDate       DateTime           @default(now()) @db.Timestamp(6)
-  IsDeleted         Boolean            @default(false)
-  ModifiedBy        String?            @db.VarChar(50)
-  ModifiedDate      DateTime?          @db.Timestamp(6)
-  // Relations
-  User              User[] // Reverse constraint: Relation from UserType model to Asset model
-  assetMaintenances AssetMaintenance[]
+model RequestStatus {
+  RequestStatusID   Int       @id(map: "PK_RequestStatus") @default(autoincrement())
+  RequestStatusName String    @db.VarChar(50)
+  RequestStatusCode String    @db.VarChar(50)
+  CreatedBy         String    @db.VarChar(50)
+  CreatedDate       DateTime  @default(now()) @db.Timestamp(6)
+  IsDeleted         Boolean   @default(false)
+  ModifiedBy        String?   @db.VarChar(50)
+  ModifiedDate      DateTime? @db.Timestamp(6)
 }
