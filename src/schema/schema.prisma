@@ -57,6 +57,7 @@ model User {
   UserKey                       String                @db.VarChar(50)
   UserLocationID                Int
   UserRoleID                    Int?
+  IsAdmin                       Boolean?              @default(false)
   DisplayName                   String                @db.VarChar(100)
   PasswordHash                  String                @db.VarChar(100)
   EmailAddress                  String                @db.VarChar(100)
