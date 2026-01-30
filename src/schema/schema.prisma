@@ -11,98 +11,148 @@ datasource db {
 }
 
 model Product {
-  ProductID       Int       @id(map: "PK_Product") @default(autoincrement())
-  ProductName     String    @db.VarChar(50)
-  ProductCode     String    @unique @db.VarChar(50)
-  SerialNumber    String    @unique @db.VarChar(50)
-  PurchaseDate    DateTime?
-  ProductStatusID Int
-  ProductTypeID   Int
-  Model           String    @db.VarChar(50)
-  CreatedBy       String    @db.VarChar(50)
-  CreatedDate     DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted       Boolean   @default(false)
-  ModifiedBy      String?   @db.VarChar(50)
-  ModifiedDate    DateTime? @db.Timestamp(6)
+  ProductID        Int           @id(map: "PK_Product") @default(autoincrement())
+  ProductName      String        @db.VarChar(50)
+  ProductCode      String        @unique @db.VarChar(50)
+  SerialNumber     String        @unique @db.VarChar(50)
+  PurchaseDate     DateTime?
+  ProductStatusID  Int
+  ProductTypeID    Int
+  Model            String        @db.VarChar(50)
+  CreatedBy        String        @db.VarChar(50)
+  CreatedDate      DateTime      @default(now()) @db.Timestamp(6)
+  CreatedByUserID  Int?
+  ModifiedByUserID Int?
+  IsDeleted        Boolean       @default(false)
+  ModifiedBy       String?       @db.VarChar(50)
+  ModifiedDate     DateTime?     @db.Timestamp(6)
+  CreatedByUser    User?         @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser   User?         @relation(fields: [ModifiedByUserID], references: [UserID])
+  ProductStatus    ProductStatus @relation(fields: [ProductStatusID], references: [ProductStatusID])
+  ProductType      ProductType   @relation(fields: [ProductTypeID], references: [ProductTypeID])
+  Asset            Asset[]
 }
 
 model Asset {
-  AssetID      Int       @id(map: "PK_Asset") @default(autoincrement())
-  ProductID    Int
-  UserID       Int?
-  CreatedBy    String    @db.VarChar(50)
-  CreatedDate  DateTime  @default(now()) @db.Timestamp(6)
-  ModifiedBy   String?   @db.VarChar(50)
-  ModifiedDate DateTime? @db.Timestamp(6)
-  IsDeleted    Boolean   @default(false)
+  AssetID              Int                   @id(map: "PK_Asset") @default(autoincrement())
+  ProductID            Int
+  UserID               Int?
+  CreatedBy            String                @db.VarChar(50)
+  CreatedDate          DateTime              @default(now()) @db.Timestamp(6)
+  ModifiedBy           String?               @db.VarChar(50)
+  CreatedByUserID      Int?
+  ModifiedByUserID     Int?
+  ModifiedDate         DateTime?             @db.Timestamp(6)
+  IsDeleted            Boolean               @default(false)
+  CreatedByUser        User?                 @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser       User?                 @relation(fields: [ModifiedByUserID], references: [UserID])
+  Product              Product               @relation(fields: [ProductID], references: [ProductID])
+  User                 User                  @relation(fields: [UserID], references: [UserID])
+  assetServiceRequests AssetServiceRequest[]
 }
 
 model User {
-  UserID         Int       @id(map: "PK_User") @default(autoincrement())
-  UserName       String    @db.VarChar(50)
-  UserKey        String    @db.VarChar(50)
-  UserLocationID Int
-  UserRoleID     Int?
-  DisplayName    String    @db.VarChar(100)
-  PasswordHash   String    @db.VarChar(100)
-  EmailAddress   String    @db.VarChar(100)
-  StartDate      DateTime  @db.Timestamp(6)
-  EndDate        DateTime? @db.Timestamp(6)
-  CreatedBy      String    @db.VarChar(50)
-  CreatedDate    DateTime  @default(now()) @db.Timestamp(6)
-  ModifiedBy     String?   @db.VarChar(50)
-  ModifiedDate   DateTime? @db.Timestamp(6)
-  IsDeleted      Boolean   @default(false)
+  UserID                        Int                   @id(map: "PK_User") @default(autoincrement())
+  UserName                      String                @db.VarChar(50)
+  UserKey                       String                @db.VarChar(50)
+  UserLocationID                Int
+  UserRoleID                    Int?
+  DisplayName                   String                @db.VarChar(100)
+  PasswordHash                  String                @db.VarChar(100)
+  EmailAddress                  String                @db.VarChar(100)
+  StartDate                     DateTime              @db.Timestamp(6)
+  EndDate                       DateTime?             @db.Timestamp(6)
+  CreatedBy                     String                @db.VarChar(50)
+  CreatedDate                   DateTime              @default(now()) @db.Timestamp(6)
+  CreatedByUserID               Int?
+  ModifiedBy                    String?               @db.VarChar(50)
+  ModifiedDate                  DateTime?             @db.Timestamp(6)
+  IsDeleted                     Boolean               @default(false)
+  ModifiedByUserID              Int?
+  Location                      Location              @relation(fields: [UserLocationID], references: [LocationID])
+  UserRole                      UserRole              @relation(fields: [UserRoleID], references: [UserRoleID])
+  Asset                         Asset[]
+  ReportedByAssetServiceRequest AssetServiceRequest[] @relation("ReportedBy")
+  ReportedToAssetServiceRequest AssetServiceRequest[] @relation("ReportedTo")
+  requestStatuses               RequestStatus[]
+  products                      Product[]
+  productTypes                  ProductType[]
+  productStatuses               ProductStatus[]
+  CreatedByAssetServiceRequest  AssetServiceRequest[] @relation("CreatedBy")
+  ModifiedByAssetServiceRequest AssetServiceRequest[] @relation("ModifiedBy")
 }
 
 model AssetServiceRequest {
-  AssetServiceRequestID Int       @id(map: "PK_AssetMaintenance") @default(autoincrement())
+  AssetServiceRequestID Int           @id(map: "PK_AssetMaintenance") @default(autoincrement())
   AssetID               Int
   ReportedByUserID      Int
   ReportedToUserID      Int
-  Defect                String    @db.VarChar(50)
+  Defect                String        @db.VarChar(50)
   StartDate             DateTime
   EndDate               DateTime?
   RequestStatusID       Int
-  Remarks               String?   @db.VarChar(500)
-  CreatedBy             String    @db.VarChar(50)
-  CreatedDate           DateTime  @default(now()) @db.Timestamp(6)
-  ModifiedBy            String?   @db.VarChar(50)
-  ModifiedDate          DateTime? @db.Timestamp(6)
-  IsDeleted             Boolean   @default(false)
+  Remarks               String?       @db.VarChar(500)
+  CreatedBy             String        @db.VarChar(50)
+  CreatedDate           DateTime      @default(now()) @db.Timestamp(6)
+  CreatedByUserID       Int?
+  ModifiedByUserID      Int?
+  ModifiedBy            String?       @db.VarChar(50)
+  ModifiedDate          DateTime?     @db.Timestamp(6)
+  IsDeleted             Boolean       @default(false)
+  CreatedByUser         User?         @relation("CreatedBy", fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser        User?         @relation("ModifiedBy", fields: [ModifiedByUserID], references: [UserID])
+  Asset                 Asset         @relation(fields: [AssetID], references: [AssetID])
+  ReportedByUser        User          @relation("ReportedBy", fields: [ReportedByUserID], references: [UserID])
+  ReportedToUser        User          @relation("ReportedTo", fields: [ReportedToUserID], references: [UserID])
+  RequestStatus         RequestStatus @relation(fields: [RequestStatusID], references: [RequestStatusID])
 }
 
 model ProductType {
-  ProductTypeID   Int       @id(map: "PK_ProductType") @default(autoincrement())
-  ProductTypeName String    @db.VarChar(50)
-  ProductTypeCode String    @db.VarChar(50)
-  CreatedBy       String    @db.VarChar(50)
-  CreatedDate     DateTime  @default(now()) @db.Timestamp(6)
-  ModifiedBy      String?   @db.VarChar(50)
-  ModifiedDate    DateTime? @db.Timestamp(6)
-  IsDeleted       Boolean   @default(false)
+  ProductTypeID    Int       @id(map: "PK_ProductType") @default(autoincrement())
+  ProductTypeName  String    @db.VarChar(50)
+  ProductTypeCode  String    @db.VarChar(50)
+  CreatedBy        String    @db.VarChar(50)
+  CreatedDate      DateTime  @default(now()) @db.Timestamp(6)
+  CreatedByUserID  Int?
+  ModifiedByUserID Int?
+  ModifiedBy       String?   @db.VarChar(50)
+  ModifiedDate     DateTime? @db.Timestamp(6)
+  IsDeleted        Boolean   @default(false)
+  CreatedByUser    User?     @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser   User?     @relation(fields: [ModifiedByUserID], references: [UserID])
+  Product          Product[]
 }
 
 model UserRole {
-  UserRoleID   Int       @id(map: "PK_UserRole") @default(autoincrement())
-  UserRoleName String    @db.VarChar(50)
-  UserRoleCode String    @db.VarChar(50)
-  CreatedBy    String    @db.VarChar(50)
-  CreatedDate  DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted    Boolean   @default(false)
-  ModifiedBy   String?   @db.VarChar(50)
-  ModifiedDate DateTime? @db.Timestamp(6)
+  UserRoleID       Int       @id(map: "PK_UserRole") @default(autoincrement())
+  UserRoleName     String    @db.VarChar(50)
+  UserRoleCode     String    @db.VarChar(50)
+  CreatedBy        String    @db.VarChar(50)
+  CreatedDate      DateTime  @default(now()) @db.Timestamp(6)
+  IsDeleted        Boolean   @default(false)
+  CreatedByUserID  Int?
+  ModifiedByUserID Int?
+  ModifiedBy       String?   @db.VarChar(50)
+  ModifiedDate     DateTime? @db.Timestamp(6)
+  CreatedByUser    User?     @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser   User?     @relation(fields: [ModifiedByUserID], references: [UserID])
+  User             User[]
 }
 
 model Location {
-  LocationID   Int       @id(map: "PK_Location") @default(autoincrement())
-  LocationName String    @db.VarChar(50)
-  LocationCode String    @db.VarChar(50)
-  CreatedBy    String    @db.VarChar(50)
-  CreatedDate  DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted    Boolean   @default(false)
-  ModifiedBy   String?   @db.VarChar(50)
-  ModifiedDate DateTime? @db.Timestamp(6)
+  LocationID       Int       @id(map: "PK_Location") @default(autoincrement())
+  LocationName     String    @db.VarChar(50)
+  LocationCode     String    @db.VarChar(50)
+  CreatedBy        String    @db.VarChar(50)
+  CreatedDate      DateTime  @default(now()) @db.Timestamp(6)
+  CreatedByUserID  Int?
+  ModifiedByUserID Int?
+  IsDeleted        Boolean   @default(false)
+  ModifiedBy       String?   @db.VarChar(50)
+  ModifiedDate     DateTime? @db.Timestamp(6)
+  CreatedByUser    User?     @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser   User?     @relation(fields: [ModifiedByUserID], references: [UserID])
+  User             User[]
 }
 
 model ProductStatus {
@@ -111,18 +161,28 @@ model ProductStatus {
   ProductStatusCode String    @db.VarChar(50)
   CreatedBy         String    @db.VarChar(50)
   CreatedDate       DateTime  @default(now()) @db.Timestamp(6)
+  CreatedByUserID   Int?
+  ModifiedByUserID  Int?
   IsDeleted         Boolean   @default(false)
   ModifiedBy        String?   @db.VarChar(50)
   ModifiedDate      DateTime? @db.Timestamp(6)
+  CreatedByUser     User?     @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser    User?     @relation(fields: [ModifiedByUserID], references: [UserID])
+  Product           Product[]
 }
 
 model RequestStatus {
-  RequestStatusID   Int       @id(map: "PK_RequestStatus") @default(autoincrement())
-  RequestStatusName String    @db.VarChar(50)
-  RequestStatusCode String    @db.VarChar(50)
-  CreatedBy         String    @db.VarChar(50)
-  CreatedDate       DateTime  @default(now()) @db.Timestamp(6)
-  IsDeleted         Boolean   @default(false)
-  ModifiedBy        String?   @db.VarChar(50)
-  ModifiedDate      DateTime? @db.Timestamp(6)
+  RequestStatusID     Int                   @id(map: "PK_RequestStatus") @default(autoincrement())
+  RequestStatusName   String                @db.VarChar(50)
+  RequestStatusCode   String                @db.VarChar(50)
+  CreatedBy           String                @db.VarChar(50)
+  CreatedDate         DateTime              @default(now()) @db.Timestamp(6)
+  CreatedByUserID     Int?
+  ModifiedByUserID    Int?
+  IsDeleted           Boolean               @default(false)
+  ModifiedBy          String?               @db.VarChar(50)
+  ModifiedDate        DateTime?             @db.Timestamp(6)
+  AssetServiceRequest AssetServiceRequest[]
+  CreatedByUser       User?                 @relation(fields: [CreatedByUserID], references: [UserID])
+  ModifiedByUser      User?                 @relation(fields: [ModifiedByUserID], references: [UserID])
 }
