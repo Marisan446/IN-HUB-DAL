@@ -126,7 +126,7 @@ model ProductType {
 
 model UserRole {
   UserRoleID       Int       @id(map: "PK_UserRole") @default(autoincrement())
-  UserRoleName     String    @db.VarChar(50)
+  UserRoleName     String    @db.VarChar(50) //User Assigned Role eg // dev/test/uiux
   UserRoleCode     String    @db.VarChar(50)
   CreatedBy        String    @db.VarChar(50)
   CreatedDate      DateTime  @default(now()) @db.Timestamp(6)

@@ -1,14 +1,16 @@
-// Importing necessary libraries and modules
 const express = require('express');
-const cors = require('cors');
+const locationRoutes = require('./routes/location.routes');
+
 const app = express();
-const basicAuth = require("express-basic-auth");
-const Common = require('./utils/commons');
-const EndPoint = require('./utils/endpoint')
 
-// Creating objects of the utility classes
-const commons = new Common();
-const endpoint = new EndPoint()
+// Middleware
+app.use(express.json());
 
-// Exporting the app to be used in the server setup
+app.use('/api/locations', locationRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 module.exports = app;
