@@ -22,13 +22,13 @@ module.exports = class LocationAPIController {
                 return res.status(409).json({ success: false, message: 'Location code already exists' });
             }
 
-            const currentUser = req.user || { UserID: null, Username: 'System' };
+            const currentUser = req.user || { UserID: null, UserName: 'System' };
 
             const newLocation = await prisma.location.create({
                 data: {
                     LocationName,
                     LocationCode: LocationCode.toUpperCase(),
-                    CreatedBy: currentUser.Username,
+                    CreatedBy: currentUser.UserName,
                     CreatedByUserID: currentUser.UserID,
                     CreatedDate: new Date()
                 },
@@ -36,8 +36,8 @@ module.exports = class LocationAPIController {
                     CreatedByUser: {
                         select: {
                             UserID: true,
-                            Username: true,
-                            Email: true
+                            UserName: true,
+                            EmailAddress: true
                         }
                     }
                 }
@@ -100,15 +100,15 @@ module.exports = class LocationAPIController {
                         CreatedByUser: {
                             select: {
                                 UserID: true,
-                                Username: true,
-                                Email: true
+                                UserName: true,
+                                EmailAddress: true
                             }
                         },
                         ModifiedByUser: {
                             select: {
                                 UserID: true,
-                                Username: true,
-                                Email: true
+                                UserName: true,
+                                EmailAddress: true
                             }
                         }
                     }
@@ -177,11 +177,11 @@ module.exports = class LocationAPIController {
             }
 
             // Get current user from request (assuming auth middleware sets req.user)
-            const currentUser = req.user || { UserID: null, Username: 'System' };
+            const currentUser = req.user || { UserID: null, UserName: 'System' };
 
             // Prepare update data
             const updateData = {
-                ModifiedBy: currentUser.Username,
+                ModifiedBy: currentUser.UserName,
                 ModifiedByUserID: currentUser.UserID,
                 ModifiedDate: new Date()
             };
@@ -203,15 +203,15 @@ module.exports = class LocationAPIController {
                     CreatedByUser: {
                         select: {
                             UserID: true,
-                            Username: true,
-                            Email: true
+                            UserName: true,
+                            EmailAddress: true
                         }
                     },
                     ModifiedByUser: {
                         select: {
                             UserID: true,
-                            Username: true,
-                            Email: true
+                            UserName: true,
+                            EmailAddress: true
                         }
                     }
                 }
