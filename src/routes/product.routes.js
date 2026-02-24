@@ -3,9 +3,6 @@ const Router = express.Router();
 
 const ProductAPIController = require("../controllers/product.controller.js");
 
-const locationAPIController = new ProductAPIController
-Router.post('/create', locationAPIController.createLocation);
-Router.post('/read', locationAPIController.readLocation)
-Router.post('/update', locationAPIController.updateLocation);
-
+const productAPIController = new ProductAPIController
+Router.post('/create', productAPIController.CreateProduct);
 module.exports = Router;
