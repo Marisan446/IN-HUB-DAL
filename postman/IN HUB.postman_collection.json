@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "516d85e9-6ffe-433f-a5f5-78ccdddc7c27",
+		"name": "IN HUB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47844687",
+		"_collection_link": "https://red-trinity-542712.postman.co/workspace/My-Workspace~b2ea7b56-6bd4-4982-8ebc-d93bfb061e9a/collection/47844687-516d85e9-6ffe-433f-a5f5-78ccdddc7c27?action=share&source=collection_link&creator=47844687"
+	},
+	"item": [
+		{
+			"name": "Location",
+			"item": [
+				{
+					"name": "Version one",
+					"item": [
+						{
+							"name": "Create Location",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"LocationName\":\"Mumbai\",\n    \"LocationCode\":\"MUMBAI\",\n    \"user\":\"system user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/location/create",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"location",
+										"create"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Read Location",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"LocationName\":\"Chennai\",\n    \"LocationCode\":\"CHENNAI\",\n    \"user\":\"system user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/location/read",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"location",
+										"read"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
